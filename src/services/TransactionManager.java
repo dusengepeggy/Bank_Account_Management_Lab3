@@ -44,13 +44,9 @@ public class TransactionManager {
             return new ArrayList<>();
         }
 
-        List<Transaction> filtered = new ArrayList<>();
-        for (Transaction transaction : transactions) {
-            if (transaction.getAccountNumber().equals(accountNumber)) {
-                filtered.add(transaction);
-            }
-        }
-        return filtered;
+        return transactions.stream()
+                .filter(transaction -> transaction.getAccountNumber().equals(accountNumber))
+                .collect(Collectors.toList());
     }
 
     
@@ -76,9 +72,8 @@ public class TransactionManager {
      * @param transactions the transactions to display
      */
     private void displayTransactionList(List<Transaction> transactions) {
-        for (Transaction transaction : transactions) {
-            transaction.displayTransactionDetails();
-        }
+        transactions.stream()
+                .forEach(Transaction::displayTransactionDetails);
     }
 
     /**
@@ -105,14 +100,11 @@ public class TransactionManager {
      * @return the total deposit amount
      */
     public double calculateDeposits(String accountNumber) {
-        double depositSum = 0;
-        List<Transaction> transactionsByAccountId = filterById(accountNumber);
-        for (Transaction transaction : transactionsByAccountId) {
-            if (transaction.getType().equalsIgnoreCase("Deposit")||transaction.getType().equalsIgnoreCase("WIRE_TRANSFER_IN") ) {
-                depositSum += transaction.getAmount();
-            }
-        }
-        return depositSum;
+        return filterById(accountNumber).stream()
+                .filter(transaction -> transaction.getType().equalsIgnoreCase("Deposit") 
+                        || transaction.getType().equalsIgnoreCase("WIRE_TRANSFER_IN"))
+                .mapToDouble(Transaction::getAmount)
+                .sum();
     }
 
     /**
@@ -122,14 +114,11 @@ public class TransactionManager {
      * @return the total withdrawal amount
      */
     public double calculateWithdrawal(String accountNumber) {
-        double withdrawnSum = 0;
-        List<Transaction> transactionsByAccountId = filterById(accountNumber);
-        for (Transaction transaction : transactionsByAccountId) {
-            if (transaction.getType().equalsIgnoreCase("Withdrawal")||transaction.getType().equalsIgnoreCase("WIRE_TRANSFER_OUT") ) {
-                withdrawnSum += transaction.getAmount();
-            }
-        }
-        return withdrawnSum;
+        return filterById(accountNumber).stream()
+                .filter(transaction -> transaction.getType().equalsIgnoreCase("Withdrawal") 
+                        || transaction.getType().equalsIgnoreCase("WIRE_TRANSFER_OUT"))
+                .mapToDouble(Transaction::getAmount)
+                .sum();
     }
 
     /**

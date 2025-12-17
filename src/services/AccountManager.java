@@ -30,17 +30,14 @@ public class AccountManager {
    }
 
    public void viewAllAccounts (){
-       for (Account account : accounts.values()) {
-           account.displayAccountDetail();
-       }
+       accounts.values().stream()
+               .forEach(Account::displayAccountDetail);
    }
 
    public double getTotalBalance () {
-       double sum = 0;
-       for (Account account : accounts.values()) {
-           sum += account.getBalance();
-       }
-       return sum;
+       return accounts.values().stream()
+               .mapToDouble(Account::getBalance)
+               .sum();
    }
 
    public int getAccountCount(){
