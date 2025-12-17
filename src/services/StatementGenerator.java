@@ -5,8 +5,8 @@ import models.Transaction;
 import models.exceptions.InvalidAccountException;
 
 public class StatementGenerator {
-    private AccountManager accountManager;
-    private TransactionManager transactionManager;
+    private final AccountManager accountManager;
+    private final TransactionManager transactionManager;
 
     /**
      * Constructs a StatementGenerator with the specified managers.
@@ -53,7 +53,7 @@ public class StatementGenerator {
 
         System.out.println("TRANSACTION HISTORY");
         System.out.println("-".repeat(70));
-        Transaction[] transactions = transactionManager.filterById(accountNumber);
+        java.util.List<Transaction> transactions = transactionManager.filterById(accountNumber);
         transactionManager.viewTransactionsByAccounts(accountNumber);
         System.out.println();
         
@@ -64,7 +64,7 @@ public class StatementGenerator {
         double totalWithdrawals = transactionManager.calculateWithdrawal(accountNumber);
         double netChange = totalDeposits - totalWithdrawals;
         
-        System.out.println("Total Transactions: " + transactions.length);
+        System.out.println("Total Transactions: " + transactions.size());
         System.out.println("Total Deposits: $" + String.format("%.2f", totalDeposits));
         System.out.println("Total Withdrawals: $" + String.format("%.2f", totalWithdrawals));
         System.out.println("Net Change: $" + String.format("%.2f", netChange));

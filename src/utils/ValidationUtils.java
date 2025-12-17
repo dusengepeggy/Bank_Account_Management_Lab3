@@ -6,7 +6,7 @@ public class ValidationUtils {
     private static Scanner sc;
 
     public ValidationUtils(Scanner sc) {
-        this.sc = sc;
+        ValidationUtils.sc = sc;
     }
 
     public int readInt(String prompt, int min, int max) {

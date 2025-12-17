@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import services.AccountManager;
 import services.TransactionManager;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TransactionManagerTest {
@@ -147,16 +148,16 @@ public class TransactionManagerTest {
         transactionManager.addTransaction(withdrawalTransaction);
         transactionManager.addTransaction(depositTransaction);
 
-        Transaction[] sourceTransactions = transactionManager.filterById(sourceAccount.getAccountNumber());
-        assertEquals(1, sourceTransactions.length,
+        List<Transaction> sourceTransactions = transactionManager.filterById(sourceAccount.getAccountNumber());
+        assertEquals(1, sourceTransactions.size(),
                 "Should find 1 transaction for source account");
-        assertEquals("Withdrawal", sourceTransactions[0].getType(),
+        assertEquals("Withdrawal", sourceTransactions.get(0).getType(),
                 "Transaction type should be Withdrawal");
 
-        Transaction[] destinationTransactions = transactionManager.filterById(destinationAccount.getAccountNumber());
-        assertEquals(1, destinationTransactions.length,
+        List<Transaction> destinationTransactions = transactionManager.filterById(destinationAccount.getAccountNumber());
+        assertEquals(1, destinationTransactions.size(),
                 "Should find 1 transaction for destination account");
-        assertEquals("Deposit", destinationTransactions[0].getType(),
+        assertEquals("Deposit", destinationTransactions.get(0).getType(),
                 "Transaction type should be Deposit");
     }
 
@@ -196,9 +197,9 @@ public class TransactionManagerTest {
             sourceAccount.getAccountNumber(), "Deposit", 100.0, 1100.0);
         transactionManager.addTransaction(transaction);
 
-        Transaction[] result = transactionManager.filterById("INVALID123");
-        assertEquals(0, result.length,
-                "Filtering with invalid account number should return empty array");
+        List<Transaction> result = transactionManager.filterById("INVALID123");
+        assertEquals(0, result.size(),
+                "Filtering with invalid account number should return empty list");
     }
 
     @Test
@@ -207,9 +208,9 @@ public class TransactionManagerTest {
             sourceAccount.getAccountNumber(), "Deposit", 100.0, 1100.0);
         transactionManager.addTransaction(transaction);
 
-        Transaction[] result = transactionManager.filterById(null);
-        assertEquals(0, result.length,
-                "Filtering with null account number should return empty array");
+        List<Transaction> result = transactionManager.filterById(null);
+        assertEquals(0, result.size(),
+                "Filtering with null account number should return empty list");
     }
 
     @Test
@@ -218,9 +219,9 @@ public class TransactionManagerTest {
             sourceAccount.getAccountNumber(), "Deposit", 100.0, 1100.0);
         transactionManager.addTransaction(transaction);
 
-        Transaction[] result = transactionManager.filterById("");
-        assertEquals(0, result.length,
-                "Filtering with empty account number should return empty array");
+        List<Transaction> result = transactionManager.filterById("");
+        assertEquals(0, result.size(),
+                "Filtering with empty account number should return empty list");
     }
 
     @Test

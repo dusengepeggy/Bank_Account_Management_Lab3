@@ -2,13 +2,14 @@ package services;
 
 import models.Account;
 import models.exceptions.InvalidAccountException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AccountManager {
-   private Account[] accounts = new Account[50];
-   private int accountCount;
+   private final Map<String, Account> accounts = new HashMap<>();
+
    public void addAccount (Account newAccount){
-       accounts[accountCount]=newAccount;
-       accountCount++;
+       accounts.put(newAccount.getAccountNumber().toUpperCase(), newAccount);
    }
    /**
     * Finds an account by account number.
@@ -18,30 +19,29 @@ public class AccountManager {
     * @throws InvalidAccountException if the account is not found
     */
    public Account findAccount(String accountNumber) throws InvalidAccountException {
-       for (int i = 0; i < accountCount; i++) {
-           if (accounts[i].getAccountNumber().equalsIgnoreCase(accountNumber)) {
-               return accounts[i];
-           }
+       if (accountNumber == null) {
+           throw new InvalidAccountException(accountNumber);
        }
-       throw new InvalidAccountException(accountNumber);
+       Account account = accounts.get(accountNumber.toUpperCase());
+       if (account == null) {
+           throw new InvalidAccountException(accountNumber);
+       }
+       return account;
    }
 
    public void viewAllAccounts (){
-       for (int i=0 ; i<accountCount;i++){
-           accounts[i].displayAccountDetail();
-       }
+       accounts.values().stream()
+               .forEach(Account::displayAccountDetail);
    }
 
    public double getTotalBalance () {
-       double sum = 0;
-       for (int i=0 ; i<accountCount;i++){
-           sum += accounts[i].getBalance();
-       }
-       return sum;
+       return accounts.values().stream()
+               .mapToDouble(Account::getBalance)
+               .sum();
    }
 
    public int getAccountCount(){
-       return accountCount;
+       return accounts.size();
    }
 
 }
