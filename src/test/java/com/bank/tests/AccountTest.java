@@ -24,8 +24,8 @@ public class AccountTest {
         Account.setAccountCounter(0);
         Customer.setCustomerCounter(0);
 
-        regularCustomer = new RegularCustomer("John Doe", 30, "123-456-7890", "123 Main St");
-        premiumCustomer = new PremiumCustomer("Jane Smith", 35, "987-654-3210", "456 Oak Ave");
+        regularCustomer = new RegularCustomer("John Doe", 30,"test@gmail.com" , "123-456-7890", "123 Main St");
+        premiumCustomer = new PremiumCustomer("Jane Smith",35, "test2@gmail.com","987-654-3210", "456 Oak Ave");
         
 
         checkingAccount = new CheckingAccount(regularCustomer, 1000.0, "Active");

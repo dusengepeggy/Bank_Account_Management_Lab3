@@ -2,8 +2,8 @@ package models;
 
 public class PremiumCustomer extends Customer {
     private double minimumBalance;
-    public PremiumCustomer( String name, int age, String contact, String address) {
-        super( name, age, contact, address);
+    public PremiumCustomer( String name, int age, String email, String contact, String address) {
+        super( name, age, email, contact, address);
     }
 
     public double getMinimumBalance() {
