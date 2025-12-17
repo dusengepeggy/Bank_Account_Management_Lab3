@@ -1,24 +1,17 @@
-import com.bank.tests.ExceptionTest;
-import com.bank.tests.TransactionManagerTest;
 import models.*;
 import models.exceptions.*;
-import org.junit.platform.engine.TestExecutionResult;
-import org.junit.platform.launcher.*;
 import services.AccountManager;
 import services.StatementGenerator;
 import services.TransactionManager;
+import utils.ConcurrencyUtils;
 import utils.ValidationUtils;
 import java.io.IOException;
 import java.util.Scanner;
-
-import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
-import org.junit.platform.launcher.core.LauncherFactory;
-import com.bank.tests.AccountTest;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 public class Main {
     private static final AccountManager accountManager = new AccountManager();
     private static final TransactionManager transactionManager = new TransactionManager();
     private static final StatementGenerator statementGenerator = new StatementGenerator(accountManager, transactionManager);
+    private static final ConcurrencyUtils concurrencyUtils = new ConcurrencyUtils(accountManager, transactionManager);
     private static final Scanner sc = new Scanner(System.in);
     private static final ValidationUtils validation = new ValidationUtils(sc);
     //...........................Sample customer data........................................
@@ -65,7 +58,7 @@ public class Main {
         while (true) {
 
             System.out.println("=======================================\n  BANK ACCOUNT MANAGEMENT - MAIN MENU \n=======================================");
-            System.out.println(" \t1. Manage Account \n \t2. Perform Transaction \n \t3. Generate Account Statement \n \t4. Run Tests \n\t5. Exit");
+            System.out.println(" \t1. Manage Accounts \n \t2. Perform Transactions \n \t3. Generate Account Statements (using Stream filtering) \n \t4. Save/Load Data \n \t5. Run Concurrent Simulation \n\t6. Exit");
             System.out.print("\nEnter choice: ");
             if (!sc.hasNextInt()) {
                 System.out.println("Invalid input! Enter a number.");
@@ -87,13 +80,16 @@ public class Main {
                     generateAccountStatement();
                     break;
                 case 4:
-                    runTests();
+                    saveLoadData();
                     break;
                 case 5:
+                    runConcurrentSimulation();
+                    break;
+                case 6:
                     System.out.println("\nThank you for using Bank Account Management System. Goodbye!");
                     return;
                 default:
-                    System.out.println("Invalid choice! Please choose a number between 1-5.");
+                    System.out.println("Invalid choice! Please choose a number between 1-6.");
                     pressEnterToContinue();
                     continue;
             }
@@ -429,36 +425,128 @@ public class Main {
         pressEnterToContinue();
     }
     
-    private static void runTests() {
+    private static void saveLoadData() {
         System.out.println("\n" + "=".repeat(50));
-        System.out.println("RUNNING TESTS");
+        System.out.println("SAVE/LOAD DATA");
         System.out.println("=".repeat(50));
-        System.out.println("\nExecuting all test suites via command line...\n");
-        LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request().selectors(
-                selectClass(AccountTest.class),
-                selectClass(ExceptionTest.class),
-                selectClass(TransactionManagerTest.class)
-        ).build();
-        Launcher launcher = LauncherFactory.create();
-        TestExecutionListener listener = new TestExecutionListener() {
-
-            @Override
-            public void executionStarted(TestIdentifier testIdentifier) {
-                if (testIdentifier.isTest()) {
-                    System.out.print("▶ Running: " + testIdentifier.getDisplayName() + "....................");
+        System.out.println("\n \t1. Save Accounts to File \n \t2. Save Transactions to File \n \t3. Load Accounts from File \n \t4. Load Transactions from File \n \t5. Save All Data \n \t6. Load All Data \n \t7. Back to Main Menu");
+        System.out.print("\nEnter choice: ");
+        
+        if (!sc.hasNextInt()) {
+            System.out.println("Invalid input! Enter a number.");
+            sc.next();
+            sc.nextLine();
+            pressEnterToContinue();
+            return;
+        }
+        
+        int choice = sc.nextInt();
+        sc.nextLine();
+        
+        switch (choice) {
+            case 1:
+                try {
+                    accountManager.saveAccountsToFile();
+                    System.out.println("\n✓ Accounts saved to file successfully!");
+                } catch (IOException e) {
+                    System.out.println("\n✗ Error saving accounts: " + e.getMessage());
                 }
-            }
-
-            @Override
-            public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
-                if (testIdentifier.isTest()) {
-                    System.out.println("(" + testExecutionResult.getStatus()+")");
+                break;
+            case 2:
+                try {
+                    transactionManager.saveTransactionsToFile();
+                    System.out.println("\n✓ Transactions saved to file successfully!");
+                } catch (IOException e) {
+                    System.out.println("\n✗ Error saving transactions: " + e.getMessage());
                 }
-            }
-        };
-        launcher.registerTestExecutionListeners(listener);
-        launcher.execute(request);
+                break;
+            case 3:
+                try {
+                    accountManager.loadAccountsFromFile();
+                    System.out.println("\n✓ Accounts loaded from file successfully!");
+                    System.out.println("Total accounts loaded: " + accountManager.getAccountCount());
+                } catch (IOException e) {
+                    System.out.println("\n✗ Error loading accounts: " + e.getMessage());
+                }
+                break;
+            case 4:
+                try {
+                    transactionManager.loadTransactionsFromFile();
+                    System.out.println("\n✓ Transactions loaded from file successfully!");
+                    System.out.println("Total transactions loaded: " + transactionManager.getTransactionCount());
+                } catch (IOException e) {
+                    System.out.println("\n✗ Error loading transactions: " + e.getMessage());
+                }
+                break;
+            case 5:
+                try {
+                    accountManager.saveAccountsToFile();
+                    transactionManager.saveTransactionsToFile();
+                    System.out.println("\n✓ All data saved to files successfully!");
+                } catch (IOException e) {
+                    System.out.println("\n✗ Error saving data: " + e.getMessage());
+                }
+                break;
+            case 6:
+                try {
+                    accountManager.loadAccountsFromFile();
+                    transactionManager.loadTransactionsFromFile();
+                    System.out.println("\n✓ All data loaded from files successfully!");
+                    System.out.println("Total accounts loaded: " + accountManager.getAccountCount());
+                    System.out.println("Total transactions loaded: " + transactionManager.getTransactionCount());
+                } catch (IOException e) {
+                    System.out.println("\n✗ Error loading data: " + e.getMessage());
+                }
+                break;
+            case 7:
+                return;
+            default:
+                System.out.println("Invalid choice! Please choose a number between 1-7.");
+                break;
+        }
+        
+        pressEnterToContinue();
+    }
+
+    private static void runConcurrentSimulation() {
         System.out.println("\n" + "=".repeat(50));
+        System.out.println("CONCURRENT TRANSACTION SIMULATION");
+        System.out.println("=".repeat(50));
+        System.out.println("\n \t1. Standard Concurrent Simulation \n \t2. Mixed Concurrent Simulation \n \t3. Back to Main Menu");
+        System.out.print("\nEnter choice: ");
+        
+        if (!sc.hasNextInt()) {
+            System.out.println("Invalid input! Enter a number.");
+            sc.next();
+            sc.nextLine();
+            pressEnterToContinue();
+            return;
+        }
+        
+        int choice = sc.nextInt();
+        sc.nextLine();
+        
+        if (choice == 3) {
+            return;
+        }
+        
+        try {
+            String accountNumber = validation.readAccountNumber("Enter Account Number: ");
+            
+            if (choice == 1) {
+                int numThreads = validation.readInt("Enter number of threads (1-20): ", 1, 20);
+                int operationsPerThread = validation.readInt("Enter operations per thread (1-50): ", 1, 50);
+                concurrencyUtils.runConcurrentSimulation(accountNumber, numThreads, operationsPerThread);
+            } else if (choice == 2) {
+                int numThreads = validation.readInt("Enter number of threads (1-20): ", 1, 20);
+                concurrencyUtils.runMixedConcurrentSimulation(accountNumber, numThreads);
+            } else {
+                System.out.println("Invalid choice! Please choose a number between 1-3.");
+            }
+        } catch (InvalidAccountException e) {
+            System.out.println("\n✗ Error: " + e.getMessage());
+        }
+        
         pressEnterToContinue();
     }
 

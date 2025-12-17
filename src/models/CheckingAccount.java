@@ -28,7 +28,7 @@ public class CheckingAccount extends Account {
         System.out.println("Monthly fee: " + monthlyFee);
     }
     @Override
-    public void withdraw(double amount) throws InvalidAmountException, OverdraftExceededException {
+    public synchronized void withdraw(double amount) throws InvalidAmountException, OverdraftExceededException {
         if (amount <= 0) {
             throw new InvalidAmountException(amount);
         }

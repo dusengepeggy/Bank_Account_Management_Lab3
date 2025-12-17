@@ -71,7 +71,7 @@ public abstract class Account implements Transactable {
      *
      * @return the account balance
      */
-    public double getBalance() {
+    public synchronized double getBalance() {
         return balance;
     }
 
@@ -80,7 +80,7 @@ public abstract class Account implements Transactable {
      *
      * @param balance the balance to set
      */
-    public void setBalance(double balance) {
+    public synchronized void setBalance(double balance) {
         this.balance = balance;
     }
 
@@ -138,7 +138,7 @@ public abstract class Account implements Transactable {
      * @param amount the amount to deposit
      * @throws InvalidAmountException if the amount is negative or zero
      */
-    public void deposit(double amount) throws InvalidAmountException {
+    public synchronized void deposit(double amount) throws InvalidAmountException {
         if (amount <= 0) {
             throw new InvalidAmountException(amount);
         }
@@ -194,7 +194,7 @@ public abstract class Account implements Transactable {
      * @param amount the amount to withdraw
      * @return true if balance is sufficient, false otherwise
      */
-    protected boolean validateBalance(double amount) {
+    protected synchronized boolean validateBalance(double amount) {
         return balance >= amount;
     }
 
@@ -203,7 +203,7 @@ public abstract class Account implements Transactable {
      *
      * @param amount the amount to add to the balance
      */
-    protected void updateBalance(double amount) {
+    protected synchronized void updateBalance(double amount) {
         balance += amount;
     }
 
