@@ -3,7 +3,7 @@ package models;
 import java.time.LocalDate;
 
 public class Transaction {
-    static int transactionCounter;
+    static int transactionCounter = 1;
     private String transactionId,accountNumber,type,timestamp;
     private double amount, balanceAfter;
 
@@ -19,6 +19,10 @@ public class Transaction {
 
     public static int getTransactionCounter() {
         return transactionCounter;
+    }
+
+    public static void setTransactionCounter(int counter) {
+        transactionCounter = counter;
     }
 
     public String getTransactionId() {
@@ -43,6 +47,30 @@ public class Transaction {
 
     public double getBalanceAfter() {
         return balanceAfter;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public void setBalanceAfter(double balanceAfter) {
+        this.balanceAfter = balanceAfter;
     }
 
     public void displayTransactionDetails(){

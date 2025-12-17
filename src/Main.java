@@ -8,6 +8,7 @@ import services.AccountManager;
 import services.StatementGenerator;
 import services.TransactionManager;
 import utils.ValidationUtils;
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
@@ -45,7 +46,21 @@ public class Main {
 
     //...........................main method..................
     public static void main (String[] args) throws InsufficientFundsException, OverdraftExceededException {
-        initializeSampleData();
+
+        try {
+            accountManager.loadAccountsFromFile();           
+            transactionManager.loadTransactionsFromFile();
+            
+            System.out.println("Data loaded from files successfully.");
+
+        } catch (IOException e) {
+            System.out.println("Error loading data from files: " + e.getMessage());
+        }
+        
+        if (accountManager.getAccountCount() == 0) {
+            System.out.println("No accounts found in file. Initializing sample data...");
+            initializeSampleData();
+        }
 
         while (true) {
 

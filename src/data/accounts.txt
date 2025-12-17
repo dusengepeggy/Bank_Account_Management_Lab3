@@ -1,0 +1,6 @@
+ACC003|Savings|Active|15750.0|Michael Chen|42|+1-555-0003|789 Pine Rd|Premium
+ACC004|Checking|Active|890.0|Emily Brown|31|+1-555-0004|321 Elm St|Regular
+ACC001|Savings|Active|5250.0|John Smith|35|+1-555-0001|123 Main St|Regular
+ACC002|Checking|Active|3450.0|Sarah Johnson|28|+1-555-0002|456 Oak Ave|Regular
+ACC005|Savings|Active|25300.0|David Wilson|55|+1-555-0005|654 Maple Dr|Premium
+ACC006|Checking|Active|300000.0|Peggy|32|3edfv|ewd|Regular
