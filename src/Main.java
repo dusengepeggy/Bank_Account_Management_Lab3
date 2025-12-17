@@ -15,11 +15,11 @@ import org.junit.platform.launcher.core.LauncherFactory;
 import com.bank.tests.AccountTest;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 public class Main {
-    private static AccountManager accountManager = new AccountManager();
-    private static TransactionManager transactionManager = new TransactionManager();
-    private static StatementGenerator statementGenerator = new StatementGenerator(accountManager, transactionManager);
-    private static Scanner sc = new Scanner(System.in);
-    private static ValidationUtils validation = new ValidationUtils(sc);
+    private static final AccountManager accountManager = new AccountManager();
+    private static final TransactionManager transactionManager = new TransactionManager();
+    private static final StatementGenerator statementGenerator = new StatementGenerator(accountManager, transactionManager);
+    private static final Scanner sc = new Scanner(System.in);
+    private static final ValidationUtils validation = new ValidationUtils(sc);
     //...........................Sample customer data........................................
     private static void initializeSampleData() {
         Customer c1 = new RegularCustomer("John Smith", 35, "+1-555-0001", "123 Main St");
@@ -321,11 +321,7 @@ public class Main {
                     } else {
                         System.out.println("\n✗ Transaction failed. Please try again.");
                     }
-                } catch (InvalidAmountException e) {
-                    System.out.println("\n✗ Error: " + e.getMessage());
-                } catch (InsufficientFundsException e) {
-                    System.out.println("\n✗ Error: " + e.getMessage());
-                } catch (OverdraftExceededException e) {
+                } catch (InvalidAmountException | InsufficientFundsException | OverdraftExceededException e) {
                     System.out.println("\n✗ Error: " + e.getMessage());
                 }
             } else {
@@ -388,11 +384,7 @@ public class Main {
                     } else {
                         System.out.println("\n✗ Wire transfer failed. Please try again.");
                     }
-                } catch (InvalidAmountException e) {
-                    System.out.println("\n✗ Error: " + e.getMessage());
-                } catch (InsufficientFundsException e) {
-                    System.out.println("\n✗ Error: " + e.getMessage());
-                } catch (OverdraftExceededException e) {
+                } catch (InvalidAmountException | InsufficientFundsException | OverdraftExceededException e) {
                     System.out.println("\n✗ Error: " + e.getMessage());
                 }
             } else {
