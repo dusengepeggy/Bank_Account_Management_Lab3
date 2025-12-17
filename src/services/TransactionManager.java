@@ -8,6 +8,7 @@ import models.exceptions.InvalidAmountException;
 import models.exceptions.OverdraftExceededException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Manages transactions for bank accounts.
