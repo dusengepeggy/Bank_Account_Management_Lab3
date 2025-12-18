@@ -34,8 +34,8 @@ public class ExceptionTest {
         accountManager = new AccountManager();
         
 
-        customer1 = new RegularCustomer("Test User 1", 25, "111-111-1111", "Test Address 1");
-        customer2 = new RegularCustomer("Test User 2", 30, "222-222-2222", "Test Address 2");
+        customer1 = new RegularCustomer("Test User 1", 25, "test1@gmail.com","111-111-1111", "Test Address 1");
+        customer2 = new RegularCustomer("Test User 2", 30, "test2@gmail.com" ,"222-222-2222", "Test Address 2");
         
 
         checkingAccount = new CheckingAccount(customer1, 1000.0, "Active");

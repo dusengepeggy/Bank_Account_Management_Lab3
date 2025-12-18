@@ -4,14 +4,16 @@ public abstract class Customer {
     private String customerId;
     private String name;
     private int age;
+    private String email;
     private  String contact;
     private  String address;
     static int customerCounter;
 
-    public Customer( String name, int age, String contact, String address) {
+    public Customer( String name, int age, String email, String contact, String address) {
         this.customerId = "CUS"+ String.format("%30d",customerCounter) ;
         this.name = name;
         this.age = age;
+        this.email = email;
         this.contact = contact;
         this.address = address;
         customerCounter++;
@@ -39,6 +41,14 @@ public abstract class Customer {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getContact() {

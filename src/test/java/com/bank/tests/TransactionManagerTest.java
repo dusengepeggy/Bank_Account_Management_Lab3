@@ -32,8 +32,8 @@ public class TransactionManagerTest {
         accountManager = new AccountManager();
         transactionManager = new TransactionManager();
 
-        customer1 = new RegularCustomer("Alice Johnson", 28, "555-0101", "789 Elm St");
-        customer2 = new RegularCustomer("Bob Williams", 32, "555-0102", "321 Pine St");
+        customer1 = new RegularCustomer("Alice Johnson", 28,"test@gmail.com", "555-0101", "789 Elm St");
+        customer2 = new RegularCustomer("Bob Williams",32,"test2@gmail.com" , "555-0102", "321 Pine St");
 
         sourceAccount = new CheckingAccount(customer1, 2000.0, "Active");
         destinationAccount = new SavingsAccount(customer2, 1000.0, "Active");

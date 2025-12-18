@@ -23,23 +23,23 @@ public class Main {
     private static final ValidationUtils validation = new ValidationUtils(sc);
     //...........................Sample customer data........................................
     private static void initializeSampleData() {
-        Customer c1 = new RegularCustomer("John Smith", 35, "+1-555-0001", "123 Main St");
+        Customer c1 = new RegularCustomer("John Smith", 35, "john.smith@example.com", "+1-555-0001", "123 Main St");
         Account a1 = new SavingsAccount(c1, 5250.00,"Active");
         accountManager.addAccount(a1);
 
-        Customer c2 = new RegularCustomer("Sarah Johnson", 28, "+1-555-0002", "456 Oak Ave");
+        Customer c2 = new RegularCustomer("Sarah Johnson", 28, "sarah.johnson@example.com", "+1-555-0002", "456 Oak Ave");
         Account a2 = new CheckingAccount(c2, 3450.00,"Active");
         accountManager.addAccount(a2);
 
-        Customer c3 = new PremiumCustomer("Michael Chen", 42, "+1-555-0003", "789 Pine Rd");
+        Customer c3 = new PremiumCustomer("Michael Chen", 42, "michael.chen@example.com", "+1-555-0003", "789 Pine Rd");
         Account a3 = new SavingsAccount(c3, 15750.00,"Active");
         accountManager.addAccount(a3);
 
-        Customer c4 = new RegularCustomer("Emily Brown", 31, "+1-555-0004", "321 Elm St");
+        Customer c4 = new RegularCustomer("Emily Brown", 31, "emily.brown@example.com", "+1-555-0004", "321 Elm St");
         Account a4 = new CheckingAccount(c4, 890.00,"Active");
         accountManager.addAccount(a4);
 
-        Customer c5 = new PremiumCustomer("David Wilson", 55, "+1-555-0005", "654 Maple Dr");
+        Customer c5 = new PremiumCustomer("David Wilson", 55, "david.wilson@example.com", "+1-555-0005", "654 Maple Dr");
         Account a5 = new SavingsAccount(c5, 25300.00,"Active");
         accountManager.addAccount(a5);
     }
@@ -152,6 +152,7 @@ public class Main {
         System.out.println();
         String name =   validation.readNonEmptyString("Enter customer name: ");
         int age = validation.readInt("Enter customer age: ", 1, 120);
+        String email = validation.readEmail("Enter customer email: ");
         String contact = validation.readNonEmptyString("Enter customer contact: ");
         String address = validation.readNonEmptyString("Enter customer address: ");
 
@@ -162,9 +163,9 @@ public class Main {
 
         Customer customer;
         if (customerType == 1) {
-            customer = new RegularCustomer(name, age, contact, address);
+            customer = new RegularCustomer(name, age, email, contact, address);
         } else {
-            customer = new PremiumCustomer(name, age, contact, address);
+            customer = new PremiumCustomer(name, age, email, contact, address);
         }
 
         System.out.println("\nAccount type:");
@@ -246,7 +247,7 @@ public class Main {
         System.out.println();
 
         try {
-            String accountNumber = validation.readNonEmptyString("Enter Account Number: ");
+            String accountNumber = validation.readAccountNumber("Enter Account Number: ");
             Account account = accountManager.findAccount(accountNumber);
 
             System.out.println("\nAccount Details:");
@@ -301,7 +302,7 @@ public class Main {
         System.out.println();
 
         try {
-            String accountNumber = validation.readNonEmptyString("Enter Account Number: ");
+            String accountNumber = validation.readAccountNumber("Enter Account Number: ");
             Account account = accountManager.findAccount(accountNumber);
 
             System.out.println("\nAccount Details:");
@@ -356,7 +357,7 @@ public class Main {
         System.out.println();
 
         try {
-            String fromAccountNumber = validation.readNonEmptyString("Enter Source Account Number: ");
+            String fromAccountNumber = validation.readAccountNumber("Enter Source Account Number: ");
             Account fromAccount = accountManager.findAccount(fromAccountNumber);
 
             System.out.println("\nSource Account Details:");
@@ -364,7 +365,7 @@ public class Main {
             System.out.println("Account Type: " + fromAccount.getAccountType());
             System.out.println("Current Balance: $" + fromAccount.getBalance());
 
-            String toAccountNumber = validation.readNonEmptyString("\nEnter Destination Account Number: ");
+            String toAccountNumber = validation.readAccountNumber("\nEnter Destination Account Number: ");
             Account toAccount = accountManager.findAccount(toAccountNumber);
 
             System.out.println("\nDestination Account Details:");
@@ -419,7 +420,7 @@ public class Main {
         System.out.println();
 
         try {
-            String accountNumber = validation.readNonEmptyString("Enter Account Number: ");
+            String accountNumber = validation.readAccountNumber("Enter Account Number: ");
             statementGenerator.generateAccountStatement(accountNumber);
         } catch (InvalidAccountException e) {
             System.out.println("\n✗ Error: " + e.getMessage());

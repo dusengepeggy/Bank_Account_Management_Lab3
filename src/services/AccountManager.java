@@ -87,6 +87,7 @@ public class AccountManager {
                String.valueOf(account.getBalance()),
                customer.getName(),
                String.valueOf(customer.getAge()),
+               customer.getEmail(),
                customer.getContact(),
                customer.getAddress(),
                customer.getCustomerType()
@@ -110,42 +111,45 @@ public class AccountManager {
 
    private Account parseAccountFromLine(String line) {
        String[] parts = line.split("\\|");
-       if (parts.length != 9) {
+       if (parts.length == 9) {
+           String accountNumber = parts[0];
+           String accountType = parts[1];
+           String status = parts[2];
+           double balance = Double.parseDouble(parts[3]);
+           String customerName = parts[4];
+           int customerAge = Integer.parseInt(parts[5]);
+           String customerContact = parts[6];
+           String customerAddress = parts[7];
+           String customerType = parts[8];
+           Customer customer = createCustomer(customerName, customerAge, "unknown@example.com", customerContact, customerAddress, customerType);
+           Account account = createAccount(accountType, customer, balance, status);
+           account.setAccountNumber(accountNumber);
+           return account;
+       } else if (parts.length == 10) {
+           String accountNumber = parts[0];
+           String accountType = parts[1];
+           String status = parts[2];
+           double balance = Double.parseDouble(parts[3]);
+           String customerName = parts[4];
+           int customerAge = Integer.parseInt(parts[5]);
+           String customerEmail = parts[6];
+           String customerContact = parts[7];
+           String customerAddress = parts[8];
+           String customerType = parts[9];
+           Customer customer = createCustomer(customerName, customerAge, customerEmail, customerContact, customerAddress, customerType);
+           Account account = createAccount(accountType, customer, balance, status);
+           account.setAccountNumber(accountNumber);
+           return account;
+       } else {
            throw new IllegalArgumentException("Invalid account line format: " + line);
        }
-       
-       String accountNumber = parts[0];
-       String accountType = parts[1];
-       String status = parts[2];
-       double balance = Double.parseDouble(parts[3]);
-       String customerName = parts[4];
-       int customerAge = Integer.parseInt(parts[5]);
-       String customerContact = parts[6];
-       String customerAddress = parts[7];
-       String customerType = parts[8];
-       
-       Customer customer = createCustomer(customerName, customerAge, customerContact, customerAddress, customerType);
-       Account account = createAccount(accountType, customer, balance, status);
-       account.setAccountNumber(accountNumber);
-       
-       return account;
    }
 
-   /**
-    * Creates a Customer object based on the customer type.
-    *
-    * @param name the customer name
-    * @param age the customer age
-    * @param contact the customer contact
-    * @param address the customer address
-    * @param customerType the customer type (Regular or Premium)
-    * @return the created Customer object
-    */
-   private Customer createCustomer(String name, int age, String contact, String address, String customerType) {
+   private Customer createCustomer(String name, int age, String email, String contact, String address, String customerType) {
        if ("Premium".equalsIgnoreCase(customerType)) {
-           return new PremiumCustomer(name, age, contact, address);
+           return new PremiumCustomer(name, age, email, contact, address);
        } else {
-           return new RegularCustomer(name, age, contact, address);
+           return new RegularCustomer(name, age, email, contact, address);
        }
    }
 
