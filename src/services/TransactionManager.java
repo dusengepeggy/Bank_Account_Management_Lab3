@@ -6,9 +6,15 @@ import models.exceptions.InsufficientFundsException;
 import models.exceptions.InvalidAccountException;
 import models.exceptions.InvalidAmountException;
 import models.exceptions.OverdraftExceededException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Manages transactions for bank accounts.
@@ -25,6 +31,11 @@ public class TransactionManager {
     public void addTransaction(Transaction transaction) {
         if (validateTransaction(transaction)) {
             transactions.add(transaction);
+        }
+        try{
+            saveTransactionsToFile();
+        } catch (IOException e) {
+            System.out.println("Error saving transaction to file :" + e.getMessage());
         }
     }
 
@@ -129,6 +140,96 @@ public class TransactionManager {
      */
     public int getTransactionCount() {
         return transactions.size();
+    }
+
+    public void saveTransactionsToFile() throws IOException {
+        Path dataDir = Paths.get("src", "data");
+        
+        if (!Files.exists(dataDir)) {
+            Files.createDirectories(dataDir);
+        }
+        
+        Path transactionsFile = dataDir.resolve("transactions.txt");
+        
+        String content = transactions.stream()
+                .map(this::formatTransactionForFile)
+                .collect(Collectors.joining(System.lineSeparator()));
+        
+  
+        Files.writeString(transactionsFile, content, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    }
+
+
+    private String formatTransactionForFile(Transaction transaction) {
+        return String.join("|",
+                transaction.getTransactionId(),
+                transaction.getAccountNumber(),
+                transaction.getType(),
+                String.valueOf(transaction.getAmount()),
+                String.valueOf(transaction.getBalanceAfter()),
+                transaction.getTimestamp()
+        );
+    }
+
+
+    public void loadTransactionsFromFile() throws IOException {
+        Path transactionsFile = Paths.get("src", "data", "transactions.txt");
+        
+        if (!Files.exists(transactionsFile)) {
+            return;
+        }
+        
+        try (Stream<String> lines = Files.lines(transactionsFile)) {
+            lines.filter(line -> !line.trim().isEmpty())
+                    .map(this::parseTransactionFromLine)
+                    .forEach(transactions::add);
+            
+            // Restore transaction counter to highest ID found
+            restoreTransactionCounter();
+        }
+    }
+
+    private void restoreTransactionCounter() {
+        if (transactions.isEmpty()) {
+            return;
+        }
+        
+        int maxIdNumber = transactions.stream()
+                .map(Transaction::getTransactionId)
+                .filter(id -> id != null && id.startsWith("TXN"))
+                .mapToInt(id -> {
+                    try {
+                        String numberPart = id.substring(3);
+                        return Integer.parseInt(numberPart);
+                    } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
+                        return 0;
+                    }
+                })
+                .max()
+                .orElse(-1);
+        
+
+        Transaction.setTransactionCounter(maxIdNumber + 1);
+    }
+
+    private Transaction parseTransactionFromLine(String line) {
+        String[] parts = line.split("\\|");
+        if (parts.length != 6) {
+            throw new IllegalArgumentException("Invalid transaction line format: " + line);
+        }
+        
+        String transactionId = parts[0];
+        String accountNumber = parts[1];
+        String type = parts[2];
+        double amount = Double.parseDouble(parts[3]);
+        double balanceAfter = Double.parseDouble(parts[4]);
+        String timestamp = parts[5];
+        
+        Transaction transaction = new Transaction(accountNumber, type, amount, balanceAfter);
+        transaction.setTransactionId(transactionId);
+        transaction.setTimestamp(timestamp);
+        
+        return transaction;
     }
 
     /**
